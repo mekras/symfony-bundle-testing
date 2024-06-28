@@ -1,0 +1,13 @@
+##
+## Настройки статического анализатора PHPStan
+##
+
+parameters:
+    # Уровень проверки от 0 до 7 (вместо 7 можно указать "max").
+    level: max
+    # Пути, которые следует проверять.
+    paths:
+        - src
+        - tests
+    excludePaths:
+        - tests/Unit/Fixtures/*

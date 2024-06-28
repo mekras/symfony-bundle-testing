@@ -1,0 +1,49 @@
+{
+    "name": "mekras/symfony-bundle-testing",
+    "description": "Инструменты для тестирования пакетов Symfony",
+    "type": "symfony-bundle",
+    "keywords": [
+        "phpunit",
+        "symfony",
+        "тестирование"
+    ],
+    "license": "MIT",
+    "minimum-stability": "stable",
+    "config": {
+        "preferred-install": {
+            "*": "dist"
+        },
+        "sort-packages": true,
+        "allow-plugins": {
+            "phpstan/extension-installer": true,
+            "infection/extension-installer": true
+        }
+    },
+    "require": {
+        "php": "^7.4|^8.0",
+        "nyholm/psr7": "^1.5",
+        "symfony/browser-kit": "^5.3|^6.0",
+        "symfony/framework-bundle": "^5.3|^6.0",
+        "symfony/yaml": "^5.3|^6.0"
+    },
+    "require-dev": {
+        "infection/infection": "^0.26",
+        "phpstan/extension-installer": "^1.0",
+        "phpstan/phpstan": "^1.0",
+        "phpstan/phpstan-phpunit": "^1.0",
+        "phpunit/phpunit": "9.5.16",
+        "symfony/psr-http-message-bridge": "^1.3|^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Mekras\\Symfony\\BundleTesting\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Mekras\\Symfony\\BundleTesting\\Tests\\": "tests",
+            "Mekras\\TestBundle\\Tests\\": "tests/Unit/Fixtures/TestBundle/tests",
+            "Mekras\\TestBundle\\": "tests/Unit/Fixtures/TestBundle/src"
+        }
+    }
+}
