@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  *
  * Позволяет использовать произвольную пользовательскую функции при компиляции контейнера.
  *
- * @since x.x
+ * @since 0.1
  */
 final class CallbackPass implements CompilerPassInterface
 {
@@ -28,7 +28,7 @@ final class CallbackPass implements CompilerPassInterface
      *
      * @param callable $callback Пользовательская функция, которую надо применить при компиляции.
      *
-     * @since x.x
+     * @since 0.1
      */
     public function __construct(callable $callback)
     {

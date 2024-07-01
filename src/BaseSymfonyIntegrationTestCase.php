@@ -24,7 +24,7 @@ use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 /**
  * Основной класс для тестов интеграции с Symfony
  *
- * @since x.x
+ * @since 0.1
  */
 abstract class BaseSymfonyIntegrationTestCase extends TestCase
 {
@@ -40,7 +40,7 @@ abstract class BaseSymfonyIntegrationTestCase extends TestCase
      *
      * @return array<string, array<string>>
      *
-     * @since x.x
+     * @since 0.1
      */
     public static function configTypeProvider(): array
     {
@@ -61,7 +61,7 @@ abstract class BaseSymfonyIntegrationTestCase extends TestCase
      *
      * @throws \Throwable
      *
-     * @since x.x
+     * @since 0.1
      */
     protected function addToLocator(array $serviceIds, ContainerBuilder $container): void
     {
@@ -87,7 +87,7 @@ abstract class BaseSymfonyIntegrationTestCase extends TestCase
      *
      * @throws \Throwable
      *
-     * @since x.x
+     * @since 0.1
      */
     protected function createContainer(array $public = []): ContainerBuilder
     {
@@ -152,7 +152,7 @@ abstract class BaseSymfonyIntegrationTestCase extends TestCase
      *
      * @throws \Throwable
      *
-     * @since x.x
+     * @since 0.1
      */
     protected function createContainerFromFile(
         string $configDir,
@@ -198,7 +198,7 @@ abstract class BaseSymfonyIntegrationTestCase extends TestCase
      *
      * @throws \Throwable
      *
-     * @since x.x
+     * @since 0.1
      */
     protected function expectServiceExists(string $id, ContainerBuilder $containerBuilder): void
     {
@@ -218,7 +218,7 @@ abstract class BaseSymfonyIntegrationTestCase extends TestCase
      *
      * @throws \LogicException
      *
-     * @since x.x
+     * @since 0.1
      */
     protected function getBundleClass(): string
     {
@@ -251,7 +251,7 @@ abstract class BaseSymfonyIntegrationTestCase extends TestCase
      *
      * @throws \Throwable
      *
-     * @since x.x
+     * @since 0.1
      */
     protected function getFromLocator(string $serviceId, ContainerInterface $container)
     {
@@ -266,7 +266,7 @@ abstract class BaseSymfonyIntegrationTestCase extends TestCase
      *
      * @return array<string> Имена главных классов пакетов, например, «[FooBundle::class]».
      *
-     * @since x.x
+     * @since 0.1
      */
     protected function getRequiredBundles(): array
     {
@@ -276,7 +276,7 @@ abstract class BaseSymfonyIntegrationTestCase extends TestCase
     /**
      * Возвращает путь к папке для размещения временных файлов
      *
-     * @since x.x
+     * @since 0.1
      */
     protected function getTempDir(): string
     {
@@ -292,7 +292,7 @@ abstract class BaseSymfonyIntegrationTestCase extends TestCase
      *
      * @throws \Throwable
      *
-     * @since x.x
+     * @since 0.1
      */
     protected function loadExtension(
         ContainerBuilder $container,
@@ -312,7 +312,7 @@ abstract class BaseSymfonyIntegrationTestCase extends TestCase
      *
      * @throws \Throwable
      *
-     * @since x.x
+     * @since 0.1
      */
     protected function registerBundle(
         ContainerBuilder $container,
