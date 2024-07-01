@@ -1,0 +1,57 @@
+name: Проверка
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+permissions:
+  contents: read
+
+jobs:
+  composer:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Проверка composer.json
+      run: composer validate --strict
+
+    - name: Установка зависимостей
+      run: composer install --prefer-dist --no-progress
+
+  phpunit:
+    name: Тесты PHPUnit
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version:
+          - '7.4'
+          - '8.0'
+          - '8.1'
+          - '8.2'
+          - '8.3'
+        dependency-versions:
+          - 'lowest'
+          - 'highest'
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Настройка PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          coverage: none
+
+      - name: Установка зависимостей
+        uses: ramsey/composer-install@v2
+        with:
+          dependency-versions: ${{ matrix.dependency-versions }}
+
+      - name: PHPUnit
+        run: vendor/bin/phpunit
