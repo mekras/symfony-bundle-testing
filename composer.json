@@ -22,8 +22,8 @@
     "require": {
         "php": "^7.4|^8.0",
         "nyholm/psr7": "^1.5",
-        "symfony/browser-kit": "^5.3|^6.0",
-        "symfony/framework-bundle": "^5.3|^6.0",
+        "symfony/browser-kit": "^5.4|^6.0|^7.0",
+        "symfony/framework-bundle": "^5.4|^6.0|^7.0",
         "symfony/yaml": "^5.3|^6.0"
     },
     "require-dev": {
