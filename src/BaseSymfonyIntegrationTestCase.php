@@ -62,7 +62,7 @@ abstract class BaseSymfonyIntegrationTestCase extends TestCase
      *
      * @throws \Throwable
      *
-     * @deprecated x.x Используйте {@see TestContainerBuilder::makeLocatable()}.
+     * @deprecated 0.3.0 Используйте {@see TestContainerBuilder::makeLocatable()}.
      * @since      0.1
      */
     protected function addToLocator(array $serviceIds, ContainerBuilder $container): void
@@ -95,8 +95,8 @@ abstract class BaseSymfonyIntegrationTestCase extends TestCase
      *
      * @throws \Throwable
      *
-     * @since x.x Тип возвращаемого значения изменён с ContainerBuilder на TestContainerBuilder.
-     * @since x.x Аргумент $public объявлен устаревшим.
+     * @since 0.3.0 Тип возвращаемого значения изменён с ContainerBuilder на TestContainerBuilder.
+     * @since 0.3.0 Аргумент $public объявлен устаревшим.
      * @since 0.1
      */
     protected function createContainer(array $public = []): TestContainerBuilder
@@ -168,7 +168,7 @@ abstract class BaseSymfonyIntegrationTestCase extends TestCase
      *
      * @throws \Throwable
      *
-     * @since x.x Тип возвращаемого значения изменён с ContainerBuilder на TestContainerBuilder.
+     * @since 0.3.0 Тип возвращаемого значения изменён с ContainerBuilder на TestContainerBuilder.
      * @since 0.1
      */
     protected function createContainerFromFile(
@@ -215,7 +215,7 @@ abstract class BaseSymfonyIntegrationTestCase extends TestCase
      *
      * @throws \Throwable
      *
-     * @deprecated x.x Используйте {@see TestContainerBuilder::expectDefinitionsExists()}.
+     * @deprecated 0.3.0 Используйте {@see TestContainerBuilder::expectDefinitionsExists()}.
      * @since      0.1
      */
     protected function expectServiceExists(string $id, ContainerBuilder $container): void
@@ -275,7 +275,7 @@ abstract class BaseSymfonyIntegrationTestCase extends TestCase
      *
      * @throws \Throwable
      *
-     * @deprecated x.x Используйте {@see TestContainerBuilder::locate()}.
+     * @deprecated 0.3.0 Используйте {@see TestContainerBuilder::locate()}.
      * @since      0.1
      */
     protected function getFromLocator(string $serviceId, ContainerInterface $container)
@@ -323,7 +323,7 @@ abstract class BaseSymfonyIntegrationTestCase extends TestCase
      *
      * @throws \Throwable
      *
-     * @deprecated x.x Вместо этого метода используйте {@see TestContainerBuilder::loadExtension()}.
+     * @deprecated 0.3.0 Вместо этого метода используйте {@see TestContainerBuilder::loadExtension()}.
      * @since      0.1
      */
     protected function loadExtension(
@@ -350,7 +350,7 @@ abstract class BaseSymfonyIntegrationTestCase extends TestCase
      *
      * @throws \Throwable
      *
-     * @deprecated x.x Вместо этого метода используйте {@see
+     * @deprecated 0.3.0 Вместо этого метода используйте {@see
      *             TestContainerBuilder::registerBundle()}.
      * @since      0.1
      */

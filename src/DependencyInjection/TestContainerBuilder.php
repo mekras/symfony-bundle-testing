@@ -19,7 +19,7 @@ use Symfony\Component\HttpKernel\Bundle\BundleInterface;
  * Тестовый конструктор контейнера зависимостей, предоставляющие дополнительные возможности для
  * тестирования
  *
- * @since x.x
+ * @since 0.3.0
  */
 final class TestContainerBuilder extends ContainerBuilder
 {
@@ -52,7 +52,7 @@ final class TestContainerBuilder extends ContainerBuilder
      *
      * @throws \Throwable
      *
-     * @since x.x
+     * @since 0.3.0
      */
     public function expectDefinitionsExists(string ...$ids): void
     {
@@ -80,7 +80,7 @@ final class TestContainerBuilder extends ContainerBuilder
      *
      * @throws \Throwable
      *
-     * @since x.x
+     * @since 0.3.0
      */
     public function loadExtension(
         ExtensionInterface $extension,
@@ -101,7 +101,7 @@ final class TestContainerBuilder extends ContainerBuilder
      *
      * @throws \Throwable
      *
-     * @since x.x
+     * @since 0.3.0
      */
     public function locate(string $serviceId)
     {
@@ -120,7 +120,7 @@ final class TestContainerBuilder extends ContainerBuilder
      *
      * @throws \Throwable
      *
-     * @since x.x
+     * @since 0.3.0
      */
     public function makeLocatable(string ...$ids): void
     {
@@ -144,7 +144,7 @@ final class TestContainerBuilder extends ContainerBuilder
      *
      * @throws \Throwable
      *
-     * @since x.x
+     * @since 0.3.0
      */
     public function makePublic(string ...$ids): void
     {
@@ -180,7 +180,7 @@ final class TestContainerBuilder extends ContainerBuilder
      *
      * @throws \Throwable
      *
-     * @since x.x
+     * @since 0.3.0
      */
     public function registerBundle(
         string $bundleClassName,
