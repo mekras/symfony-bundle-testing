@@ -6,6 +6,7 @@ namespace Mekras\Symfony\BundleTesting;
 
 use Mekras\Symfony\BundleTesting\CompilerPass\CallbackPass;
 use Mekras\Symfony\BundleTesting\DependencyInjection\ContainerExpectations;
+use Mekras\Symfony\BundleTesting\DependencyInjection\TestContainerBuilder;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
@@ -31,7 +32,7 @@ abstract class BaseSymfonyIntegrationTestCase extends TestCase
     /**
      * Проверяемые контейнеры
      *
-     * @var ContainerInterface[]
+     * @var TestContainerBuilder[]
      */
     private array $containers = [];
 
@@ -61,21 +62,28 @@ abstract class BaseSymfonyIntegrationTestCase extends TestCase
      *
      * @throws \Throwable
      *
-     * @since 0.1
+     * @deprecated x.x Используйте {@see TestContainerBuilder::makeLocatable()}.
+     * @since      0.1
      */
     protected function addToLocator(array $serviceIds, ContainerBuilder $container): void
     {
-        $references = array_map(
-            static fn(string $serviceId): Reference => new Reference($serviceId),
-            $serviceIds
-        );
-        $container->setDefinition(
-            'test_locator',
-            (new Definition(ServiceLocator::class))
-                ->setPublic(true)
-                ->addArgument($references)
-                ->addTag('container.service_locator')
-        );
+        \trigger_error('Использование устаревшего метода ' . __METHOD__, \E_USER_DEPRECATED);
+
+        if ($container instanceof TestContainerBuilder) {
+            $container->makeLocatable(...$serviceIds);
+        } else {
+            $references = array_map(
+                static fn(string $serviceId): Reference => new Reference($serviceId),
+                $serviceIds
+            );
+            $container->setDefinition(
+                'test_locator',
+                (new Definition(ServiceLocator::class))
+                    ->setPublic(true)
+                    ->addArgument($references)
+                    ->addTag('container.service_locator')
+            );
+        }
     }
 
     /**
@@ -87,11 +95,19 @@ abstract class BaseSymfonyIntegrationTestCase extends TestCase
      *
      * @throws \Throwable
      *
+     * @since x.x Тип возвращаемого значения изменён с ContainerBuilder на TestContainerBuilder.
+     * @since x.x Аргумент $public объявлен устаревшим.
      * @since 0.1
      */
-    protected function createContainer(array $public = []): ContainerBuilder
+    protected function createContainer(array $public = []): TestContainerBuilder
     {
-        $container = new ContainerBuilder();
+        if ($public !== []) {
+            \trigger_error(
+                'Использование аргумента $public является устаревшим. Используйте TestContainerBuilder::makePublic().',
+                \E_USER_DEPRECATED
+            );
+        }
+        $container = new TestContainerBuilder();
 
         $container->setParameter('kernel.build_dir', $this->getTempDir());
         $container->setParameter('kernel.bundles_metadata', []);
@@ -108,10 +124,10 @@ abstract class BaseSymfonyIntegrationTestCase extends TestCase
         $container->setParameter('kernel.secret', 'test');
 
         foreach ($this->getRequiredBundles() as $className) {
-            $this->registerBundle($container, $className);
+            $container->registerBundle($className);
         }
 
-        $this->registerBundle($container, $this->getBundleClass());
+        $container->registerBundle($this->getBundleClass());
 
         $container->addCompilerPass(
             new CallbackPass(
@@ -152,13 +168,14 @@ abstract class BaseSymfonyIntegrationTestCase extends TestCase
      *
      * @throws \Throwable
      *
+     * @since x.x Тип возвращаемого значения изменён с ContainerBuilder на TestContainerBuilder.
      * @since 0.1
      */
     protected function createContainerFromFile(
         string $configDir,
         string $file,
         string $type
-    ): ContainerBuilder {
+    ): TestContainerBuilder {
         $container = $this->createContainer();
         $locator = new FileLocator($configDir);
 
@@ -193,24 +210,31 @@ abstract class BaseSymfonyIntegrationTestCase extends TestCase
      *
      * Метод следует вызывать до ContainerBuilder::compile().
      *
-     * @param string           $id               Идентификатор ожидаемой зависимости.
-     * @param ContainerBuilder $containerBuilder Конструктор контейнера.
+     * @param string           $id        Идентификатор ожидаемой зависимости.
+     * @param ContainerBuilder $container Конструктор контейнера.
      *
      * @throws \Throwable
      *
-     * @since 0.1
+     * @deprecated x.x Используйте {@see TestContainerBuilder::expectDefinitionsExists()}.
+     * @since      0.1
      */
-    protected function expectServiceExists(string $id, ContainerBuilder $containerBuilder): void
+    protected function expectServiceExists(string $id, ContainerBuilder $container): void
     {
-        if (!$containerBuilder->hasDefinition(ContainerExpectations::class)) {
-            $definition = new Definition(ContainerExpectations::class);
-            $definition->setPublic(true);
-            $definition->setAutowired(false);
-            $containerBuilder->setDefinition(ContainerExpectations::class, $definition);
-        }
+        \trigger_error('Использование устаревшего метода ' . __METHOD__, \E_USER_DEPRECATED);
 
-        $definition = $containerBuilder->getDefinition(ContainerExpectations::class);
-        $definition->addMethodCall('assertDependencyExists', [new Reference($id)]);
+        if ($container instanceof TestContainerBuilder) {
+            $container->expectDefinitionsExists($id);
+        } else {
+            if (!$container->hasDefinition(ContainerExpectations::class)) {
+                $definition = new Definition(ContainerExpectations::class);
+                $definition->setPublic(true);
+                $definition->setAutowired(false);
+                $container->setDefinition(ContainerExpectations::class, $definition);
+            }
+
+            $definition = $container->getDefinition(ContainerExpectations::class);
+            $definition->addMethodCall('assertDependencyExists', [new Reference($id)]);
+        }
     }
 
     /**
@@ -251,10 +275,17 @@ abstract class BaseSymfonyIntegrationTestCase extends TestCase
      *
      * @throws \Throwable
      *
-     * @since 0.1
+     * @deprecated x.x Используйте {@see TestContainerBuilder::locate()}.
+     * @since      0.1
      */
     protected function getFromLocator(string $serviceId, ContainerInterface $container)
     {
+        \trigger_error('Использование устаревшего метода ' . __METHOD__, \E_USER_DEPRECATED);
+
+        if ($container instanceof TestContainerBuilder) {
+            return $container->locate($serviceId);
+        }
+
         $locator = $container->get('test_locator');
         self::assertInstanceOf(ServiceLocator::class, $locator);
 
@@ -292,15 +323,22 @@ abstract class BaseSymfonyIntegrationTestCase extends TestCase
      *
      * @throws \Throwable
      *
-     * @since 0.1
+     * @deprecated x.x Вместо этого метода используйте {@see TestContainerBuilder::loadExtension()}.
+     * @since      0.1
      */
     protected function loadExtension(
         ContainerBuilder $container,
         ExtensionInterface $extension,
         array $config = []
     ): void {
-        $container->registerExtension($extension);
-        $container->loadFromExtension($extension->getAlias(), $config);
+        \trigger_error('Использование устаревшего метода ' . __METHOD__, \E_USER_DEPRECATED);
+
+        if ($container instanceof TestContainerBuilder) {
+            $container->loadExtension($extension, $config);
+        } else {
+            $container->registerExtension($extension);
+            $container->loadFromExtension($extension->getAlias(), $config);
+        }
     }
 
     /**
@@ -312,24 +350,32 @@ abstract class BaseSymfonyIntegrationTestCase extends TestCase
      *
      * @throws \Throwable
      *
-     * @since 0.1
+     * @deprecated x.x Вместо этого метода используйте {@see
+     *             TestContainerBuilder::registerBundle()}.
+     * @since      0.1
      */
     protected function registerBundle(
         ContainerBuilder $container,
         string $bundleClassName,
         array $config = []
     ): void {
-        $bundle = new $bundleClassName();
-        if (!$bundle instanceof BundleInterface) {
-            throw new ExpectationFailedException(
-                sprintf('Класс «%s» не является пактом Symfony.', $bundleClassName)
-            );
-        }
-        $bundle->build($container);
+        \trigger_error('Использование устаревшего метода ' . __METHOD__, \E_USER_DEPRECATED);
 
-        $extension = $bundle->getContainerExtension();
-        if ($extension !== null) {
-            $this->loadExtension($container, $extension, $config);
+        if ($container instanceof TestContainerBuilder) {
+            $container->registerBundle($bundleClassName, $config);
+        } else {
+            $bundle = new $bundleClassName();
+            if (!$bundle instanceof BundleInterface) {
+                throw new ExpectationFailedException(
+                    sprintf('Класс «%s» не является пакетом Symfony.', $bundleClassName)
+                );
+            }
+            $bundle->build($container);
+
+            $extension = $bundle->getContainerExtension();
+            if ($extension !== null) {
+                $this->loadExtension($container, $extension, $config);
+            }
         }
     }
 

@@ -6,6 +6,28 @@
 
 ## Новое
 
+### Изменено
+
+- Объявлены устаревшими:
+    - метод `BaseSymfonyIntegrationTestCase::loadExtension()`, вместо него следует использовать
+      `TestContainerBuilder::loadExtension()`;
+    - метод `BaseSymfonyIntegrationTestCase::registerBundle()`, вместо него следует использовать
+      `TestContainerBuilder::registerBundle()`;
+    - метод `BaseSymfonyIntegrationTestCase::expectServiceExists()`, вместо него следует
+      использовать `TestContainerBuilder::expectDefinitionsExists()`;
+    - метод `BaseSymfonyIntegrationTestCase::addToLocator()`, вместо него следует
+      использовать `TestContainerBuilder::makeLocatable()`;
+    - метод `BaseSymfonyIntegrationTestCase::getFromLocator()`, вместо него следует
+      использовать `TestContainerBuilder::locate()`;
+    - аргумент `$public` в методе `BaseSymfonyIntegrationTestCase::createContainer()`, вместо него
+      следует использовать `TestContainerBuilder::makePublic()`.
+- Методы `BaseSymfonyIntegrationTestCase::createContainer()` и
+  `BaseSymfonyIntegrationTestCase::createContainerFromFile()` теперь возвращают
+  `TestContainerBuilder`.
+
+### Добавлено
+
+- Добавлен класс `TestContainerBuilder`.
 
 ## 0.2.0 — 2024-07-01
 
@@ -16,7 +38,6 @@
 ### Добавлено
 
 - Добавлена поддержка версий Symfony 7.x.
-
 
 ## 0.1.0 — 2024-07-01
 

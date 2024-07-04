@@ -6,16 +6,16 @@ Symfony.
 ## Оглавление
 
 - [Установка](#установка)
-  - [Требования](#требования)
-  - [Установка через Composer](#установка-через-composer)
+    - [Требования](#требования)
+    - [Установка через Composer](#установка-через-composer)
 - [Интеграционные тесты](#интеграционные-тесты)
-  - [Основной класс интеграционных тестов](#основной-класс-интеграционных-тестов)
-  - [Определение имени главного класса вашего пакета](#определение-имени-главного-класса-вашего-пакета)
-  - [Написание тестов](#написание-тестов)
-  - [Как проверить, что в контейнере есть нужна служба?](#как-проверить-что-в-контейнере-есть-нужна-служба)
-  - [Как получить службу из контейнера?](#как-получить-службу-из-контейнера)
-  - [Как добавить другие пакеты в контейнер?](#как-добавить-другие-пакеты-в-контейнер)
-  - [Как устранить ошибку «service or alias has been removed or inlined»?](#как-устранить-ошибку-service-or-alias-has-been-removed-or-inlined)
+    - [Основной класс интеграционных тестов](#основной-класс-интеграционных-тестов)
+    - [Определение имени главного класса вашего пакета](#определение-имени-главного-класса-вашего-пакета)
+    - [Написание тестов](#написание-тестов)
+    - [Как проверить, что в контейнере есть нужна служба?](#как-проверить-что-в-контейнере-есть-нужна-служба)
+    - [Как получить службу из контейнера?](#как-получить-службу-из-контейнера)
+    - [Как добавить другие пакеты в контейнер?](#как-добавить-другие-пакеты-в-контейнер)
+    - [Как устранить ошибку «service or alias has been removed or inlined»?](#как-устранить-ошибку-service-or-alias-has-been-removed-or-inlined)
 
 ## Установка
 
@@ -33,14 +33,14 @@ Symfony.
 ## Интеграционные тесты
 
 Интеграционные тесты позволяют проверить как в действительности будет вести себя ваш код во
-взаимодействии с Symfony. 
+взаимодействии с Symfony.
 
 ### Основной класс интеграционных тестов
 
 Рекомендуется в каждом проекте создавать отдельный основной класс для всех классов ваших
 интеграционных тестов, как единую точку определения конфигурации тестов и добавления общих методов.
 
-Этот класс должен быть унаследован от 
+Этот класс должен быть унаследован от
 [BaseSymfonyIntegrationTestCase](src/BaseSymfonyIntegrationTestCase.php).
 
 Пример — `tests/Integration/IntegrationTestCase.php`:
@@ -101,23 +101,104 @@ final class SomeTest extends SymfonyIntegrationTestCase
         // Компилируем контейнер, чтобы подготовить его к тестам:
         $container->compile();
         
-        $someService = $container->get('some.service.id');
-        // Ваши проверки…
+        // Здесь можно писать утверждения.
     }
+}
+```
+
+Как правило, вначале надо создать контейнер зависимостей, т. к. почти вся интеграция с Symfony
+ведётся через него. Метод `$this->createContainer()` создаёт тестовый контейнер (он подробно описан
+ниже), который будет являться основной ваших тестов.
+
+Контейнер создаётся с минимально необходимой предварительной конфигурацией:
+
+- устанавливаются важные параметры `kernel.*`;
+- регистрируются пакеты, возвращаемые методом `getRequiredBundles()` (см. далее);
+- регистрируется тестируемый пакет, определяемый описанным выше методом `getBundleClass()`;
+- выполняется ряд других действий.
+
+После создания контейнера, но **до его компиляции** вы можете произвести с ним дополнительные
+действия по настройке или задать ожидания, как будет описано ниже.
+
+Далее контейнер необходимо скомпилировать, чтобы привести его в состояние, соответствующее времени
+выполнения приложения. Это делается методом `$container->compile()`.
+
+После компиляции можно выполнить нужные действия по проверке получившегося контейнера.
+
+Ниже эти вопросы будут рассмотрены подробнее.
+
+### Тестовый контейнер зависимостей
+
+Сердцем интеграционных тестов является контейнер зависимостей, позволяющий проверить правильность
+регистрации в нём расширений вашего пакета, взаимодействие с ядром Symfony и/или другими пакетами.
+
+Для создания тестового контейнера используйте метод
+`BaseSymfonyIntegrationTestCase::createContainer`:
+
+```php
+final class SomeTest extends SymfonyIntegrationTestCase
+{
+    public function testSomething(): void
+    {
+        $container = $this->createContainer();
+
+        // …
+    }
+}
+```
+
+Метод создаст и вернёт новый экземпляр класса
+[TestContainerBuilder](src/DependencyInjection/TestContainerBuilder.php), расширяющего стандартный
+`ContainerBuilder` Symfony описанными ниже возможностями.
+
+В одном тесте можно создать несколько независимых контейнеров.
+
+#### Загрузка расширений контейнера зависимостей
+
+Метод предназначен для тестирования расширений контейнера зависимостей Symfony и позволяет
+проверить, правильно ли эти расширения загружаются, правильно ли настраивают контейнер.
+
+```php
+public function testSomething(): void
+{
+    $container = $this->createContainer();
+    $container->loadExtension(new MyExtension());
+    $container->compile();
+
+    self::assertTrue($container->hasExtension('my_extension_alias'));
+}
+```
+
+#### Загрузка в контейнер зависимостей других пакетов
+
+```php
+public function testSomething(): void
+{
+    $container = $this->createContainer();
+    $container->registerBundle(MonologBundle::class);
+    $container->compile();
+
+    self::assertTrue($container->hasExtension('monolog'));
 }
 ```
 
 ### Как проверить, что в контейнере есть нужна служба?
 
-Предположим, ваш пакет должен зарегистрировать в контейнере службу с идентификатором
-`some.service.id`. Проверить, что это действительно делается можно так:
+Предположим, ваш пакет должен зарегистрировать в контейнере службы с идентификаторами
+`some.service.id` и `щерук.service.id`. Проверить, что это действительно делается, можно так:
 
 ```php
 public function testFooServiceExists(): void
 {
     $container = $this->createContainer();
-    $this->expectServiceExists('some.service.id', $container);
+    $container->expectDefinitionsExists(
+      'some.service.id',
+      'other.service.id',
+      // …
+    );
     $container->compile();
+    // Если не добавить эту строку, то PHPUnit может ругаться на отсутствие утверждений.
+    $this->expectNotToPerformAssertions();
 }
 ```
 
@@ -157,9 +238,8 @@ public function testSomething(): void
 ```php
 public function testSomething(): void
 {
-    $container = $this->createContainer([
-        'some.private.service.id' // ← Добавление сюда, делает службу публичной.
-    ]);
+    $container = $this->createContainer();
+    $container->makePublic('some.private.service.id');
     $container->compile();
     
     $someService = $container->get('some.private.service.id');
@@ -179,7 +259,7 @@ public function testSomething(): void
 {
     $container = $this->createContainer();
     // Добавляет в контейнер MonologBundle:
-    $this->registerBundle($container, MonologBundle::class);
+    $container->registerBundle(MonologBundle::class);
     $container->compile();
     
     // Ваши проверки…
@@ -202,7 +282,7 @@ abstract class IntegrationTestCase extends BaseSymfonyIntegrationTestCase
     {
         $container = parent::createContainer($public);
 
-        $this->registerBundle($container, MonologBundle::class);
+        $container->registerBundle(MonologBundle::class);
 
         return $container;
     }
@@ -240,16 +320,15 @@ abstract class IntegrationTestCase extends BaseSymfonyIntegrationTestCase
 > The "foo" service or alias has been removed or inlined when the container was compiled.
 > You should either make it public, or stop using the container directly and use dependency
 > injection instead.
- 
+
 то решить её можно сделав эту службу публичной, указав её в аргументе `$public` метода
 `createContainer()`:
 
 ```php
 public function testSomething(): void
 {
-    $container = $this->createContainer([
-      'some.private.service.id',
-    ]);
+    $container = $this->createContainer();
+    $container->makePublic('some.private.service.id');
     $container->compile();
     
     $someService = $container->get('some.private.service.id');

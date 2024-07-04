@@ -10,6 +10,10 @@ use Mekras\Symfony\BundleTesting\BaseSymfonyIntegrationTestCase;
 /**
  * Класс для проверки {@see BaseSymfonyIntegrationTestCase}
  */
-class IntegrationTestCase extends BaseSymfonyIntegrationTestCase
+final class IntegrationTestCase extends BaseSymfonyIntegrationTestCase
 {
+    public function callProtectedMethod(string $method, ...$arguments)
+    {
+        return $this->$method(...$arguments);
+    }
 }
